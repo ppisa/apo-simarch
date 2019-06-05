@@ -16,7 +16,7 @@ import sys
 import operator
 
 __author__ = "Pavel Pisa"
-__copyright__ = "Copyright 2017, Czech Technical University"
+__copyright__ = "Copyright 2017-2019, Czech Technical University"
 __license__ = "GPLv2+"
 __version__ = "0.0.1"
 __maintainer__ = "Pave Pisa"
@@ -683,6 +683,7 @@ class siminst(object):
         self.encoding = encoding
         self.pinfo = pinfo
         self.stalls = 0
+        self.forward = (0, 0)
 
     def depanalyze(self, instb, bidir = False):
         deps = 0
@@ -856,6 +857,52 @@ class siminstlist(object):
                                    distance += stalls
         return cycles
 
+    def analyze_stall_forward(self):
+        iend = len(self.instlist)
+        cycles = 4
+        for i in range(0, iend):
+            distance = 0
+            j = i
+            insta = self.instlist[i]
+            insta.stalls = 0;
+            latency = 3
+            ff_rs = 0
+            ff_rt = 0
+            while j > 0:
+                distance += 1 + self.instlist[j].stalls
+                if distance >= latency:
+                    break
+                j -= 1
+                instb = self.instlist[j]
+                if (instb.pinfo & LDD) and (distance == 1):
+                    for argb in instb.args:
+                        if not argb.wrdep:
+                            continue
+                        for arga in insta.args:
+                            if (arga.regkind == argb.regkind) and (arga.reg == argb.reg):
+                                if arga.rddep:
+                                    insta.stalls += 2 - distance
+                                    distance = 2
+                for argb in instb.args:
+                    if not argb.wrdep:
+                        continue
+                    for arga in insta.args:
+                        if (arga.regkind == argb.regkind) and (arga.reg == argb.reg):
+                            if arga.rddep:
+                                aspec = arga.argspec
+                                p = aspec.find('(')
+                                if p != -1:
+                                    aspec = aspec[p+1:-1]
+                                if (argdesbycode[aspec].loc == "RS") and (ff_rs == 0):
+                                    ff_rs = distance
+                                if (argdesbycode[aspec].loc == "RT") and (ff_rt == 0):
+                                    ff_rt = distance
+
+	    insta.forward = (ff_rs, ff_rt)
+            cycles += 1 + self.instlist[i].stalls
+        return cycles
+
+
 if __name__ == '__main__':
 
     #print siminst.regnum('t9')
@@ -888,6 +935,7 @@ if __name__ == '__main__':
     print inst2.depanalyze(inst1, bidir = False)
 
     print instlist.analyze()
+    print instlist.analyze_stall_forward()
 
     cpu = simcpustate()
 
@@ -916,6 +964,9 @@ if __name__ == '__main__':
         c = 0
         sys.stdout.write(instlist.instlist[i].astext() + '\n')
         cpu.executeinst(instlist.instlist[i])
+        sys.stdout.write('stalls ' + str(instlist.instlist[i].stalls))
+        sys.stdout.write(' ff_rs ' + str(instlist.instlist[i].forward[0]))
+        sys.stdout.write(' ff_rt ' + str(instlist.instlist[i].forward[1]) + '\n')
         for rstr in cpu.regsastext():
              sys.stdout.write(' ' + rstr)
              c += 1
