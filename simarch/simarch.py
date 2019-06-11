@@ -898,7 +898,7 @@ class siminstlist(object):
                                 if (argdesbycode[aspec].loc == "RT") and (ff_rt == 0):
                                     ff_rt = latency - distance
 
-	    insta.forward = (ff_rs, ff_rt)
+            insta.forward = (ff_rs, ff_rt)
             cycles += 1 + self.instlist[i].stalls
         return cycles
 
