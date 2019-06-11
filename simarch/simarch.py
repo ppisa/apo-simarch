@@ -894,9 +894,9 @@ class siminstlist(object):
                                 if p != -1:
                                     aspec = aspec[p+1:-1]
                                 if (argdesbycode[aspec].loc == "RS") and (ff_rs == 0):
-                                    ff_rs = distance
+                                    ff_rs = latency - distance
                                 if (argdesbycode[aspec].loc == "RT") and (ff_rt == 0):
-                                    ff_rt = distance
+                                    ff_rt = latency - distance
 
 	    insta.forward = (ff_rs, ff_rt)
             cycles += 1 + self.instlist[i].stalls
