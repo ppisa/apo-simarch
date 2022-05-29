@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 
 """
 Experimental tool for MIPS architecture assembly and binary code
@@ -244,7 +244,7 @@ instdeslist = [
     instdes("tlbwi", [], 0x42000002, 0xffffffff, INSN_TLB, 0, I1, 0),
     instdes("tlbwr", [], 0x42000006, 0xffffffff, INSN_TLB, 0, I1, 0),
     instdes("xor", ['d','v','t'], 0x00000026, 0xfc0007ff, WR_d|RD_s|RD_t, 0, I1, 0),
-    instdes("xori", ['t','r','i'], 0x38000000, 0xfc000000, WR_t|RD_s, 0, I1, 0),
+    instdes("xori", ['t','r','j'], 0x38000000, 0xfc000000, WR_t|RD_s, 0, I1, 0),
     instdes("bc2f", ['p'], 0x49000000, 0xffff0000, CBD|RD_CC, 0, I1, IOCT|IOCTP|IOCT2),
     instdes("bc2t", ['p'], 0x49010000, 0xffff0000, CBD|RD_CC, 0, I1, IOCT|IOCTP|IOCT2),
     instdes("cfc2", ['t','G'], 0x48400000, 0xffe007ff, LCD|WR_t|RD_C2, 0, I1, IOCT|IOCTP|IOCT2),
@@ -262,6 +262,127 @@ instdeslist = [
     instdes("c0", ['C'], 0x42000000, 0xfe000000, CP, 0, I1, IOCT|IOCTP|IOCT2),
     instdes("c2", ['C'], 0x4a000000, 0xfe000000, CP, 0, I1, IOCT|IOCTP|IOCT2),
     instdes("c3", ['C'], 0x4e000000, 0xfe000000, CP, 0, I1, IOCT|IOCTP|IOCT2),
+]
+
+instdeslist_rv = [
+    instdes("nop", [], 0x00000000, 0xffffffff, 0, INSN2_ALIAS, I1, 0),
+#    instdes("ssnop", [], 0x00000040, 0xffffffff, 0, INSN2_ALIAS, I1, 0),
+#    instdes("ehb", [], 0x000000c0, 0xffffffff, 0, INSN2_ALIAS, I1, 0),
+    instdes("li", ['t','j'], 0x24000000, 0xffe00000, WR_t, INSN2_ALIAS, I1, 0),
+    instdes("li", ['t','i'], 0x34000000, 0xffe00000, WR_t, INSN2_ALIAS, I1, 0),
+    instdes("move", ['d','s'], 0x00000021, 0xfc1f07ff, WR_d|RD_s, INSN2_ALIAS, I1, 0),
+    instdes("move", ['d','s'], 0x00000025, 0xfc1f07ff, WR_d|RD_s, INSN2_ALIAS, I1, 0),
+    instdes("b", ['p'], 0x10000000, 0xffff0000, UBD, INSN2_ALIAS, I1, 0),
+    instdes("b", ['p'], 0x04010000, 0xffff0000, UBD, INSN2_ALIAS, I1, 0),
+#    instdes("bal", ['p'], 0x04110000, 0xffff0000, UBD|WR_31, INSN2_ALIAS, I1, 0),
+    instdes("add", ['d','v','t'], 0x00000020, 0xfc0007ff, WR_d|RD_s|RD_t, 0, I1, 0),
+    instdes("addi", ['t','r','j'], 0x20000000, 0xfc000000, WR_t|RD_s, 0, I1, 0),
+    instdes("addiu", ['t','r','j'], 0x24000000, 0xfc000000, WR_t|RD_s, 0, I1, 0),
+    instdes("addu", ['d','v','t'], 0x00000021, 0xfc0007ff, WR_d|RD_s|RD_t, 0, I1, 0),
+    instdes("and", ['d','v','t'], 0x00000024, 0xfc0007ff, WR_d|RD_s|RD_t, 0, I1, 0),
+    instdes("andi", ['t','r','i'], 0x30000000, 0xfc000000, WR_t|RD_s, 0, I1, 0),
+    instdes("beqz", ['s','p'], 0x10000000, 0xfc1f0000, CBD|RD_s, 0, I1, 0),
+    instdes("beq", ['s','t','p'], 0x10000000, 0xfc000000, CBD|RD_s|RD_t, 0, I1, 0),
+    instdes("bgez", ['s','p'], 0x04010000, 0xfc1f0000, CBD|RD_s, 0, I1, 0),
+    instdes("bgezal", ['s','p'], 0x04110000, 0xfc1f0000, CBD|RD_s|WR_31, 0, I1, 0),
+    instdes("bgtz", ['s','p'], 0x1c000000, 0xfc1f0000, CBD|RD_s, 0, I1, 0),
+    instdes("blez", ['s','p'], 0x18000000, 0xfc1f0000, CBD|RD_s, 0, I1, 0),
+    instdes("bltz", ['s','p'], 0x04000000, 0xfc1f0000, CBD|RD_s, 0, I1, 0),
+    instdes("bltzal", ['s','p'], 0x04100000, 0xfc1f0000, CBD|RD_s|WR_31, 0, I1, 0),
+    instdes("bnez", ['s','p'], 0x14000000, 0xfc1f0000, CBD|RD_s, 0, I1, 0),
+    instdes("bne", ['s','t','p'], 0x14000000, 0xfc000000, CBD|RD_s|RD_t, 0, I1, 0),
+    instdes("break", [], 0x0000000d, 0xffffffff, TRAP, 0, I1, 0),
+    instdes("break", ['c'], 0x0000000d, 0xfc00ffff, TRAP, 0, I1, 0),
+    instdes("break", ['c','q'], 0x0000000d, 0xfc00003f, TRAP, 0, I1, 0),
+#    instdes("cfc0", ['t','G'], 0x40400000, 0xffe007ff, LCD|WR_t|RD_C0, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("ctc0", ['t','G'], 0x40c00000, 0xffe007ff, COD|RD_t|WR_CC, 0, I1, IOCT|IOCTP|IOCT2),
+    instdes("div", ['z','s','t'], 0x0000001a, 0xfc00ffff, RD_s|RD_t|WR_HILO, 0, I1, 0),
+    instdes("div", ['z','t'], 0x0000001a, 0xffe0ffff, RD_s|RD_t|WR_HILO, 0, I1, 0),
+    instdes("divu", ['z','s','t'], 0x0000001b, 0xfc00ffff, RD_s|RD_t|WR_HILO, 0, I1, 0),
+    instdes("divu", ['z','t'], 0x0000001b, 0xffe0ffff, RD_s|RD_t|WR_HILO, 0, I1, 0),
+#    instdes("jr", ['s'], 0x00000008, 0xfc1fffff, UBD|RD_s, 0, I1, 0),
+#    instdes("j", ['s'], 0x00000008, 0xfc1fffff, UBD|RD_s, 0, I1, 0),
+#    instdes("j", ['a'], 0x08000000, 0xfc000000, UBD, 0, I1, 0),
+#    instdes("jalr", ['s'], 0x0000f809, 0xfc1fffff, UBD|RD_s|WR_d, 0, I1, 0),
+#    instdes("jalr", ['d','s'], 0x00000009, 0xfc1f07ff, UBD|RD_s|WR_d, 0, I1, 0),
+#    instdes("jal", ['a'], 0x0c000000, 0xfc000000, UBD|WR_31, 0, I1, 0),
+#    instdes("jalx", ['a'], 0x74000000, 0xfc000000, UBD|WR_31, 0, I1, 0),
+#    instdes("lb", ['t','o(b)'], 0x80000000, 0xfc000000, LDD|RD_b|WR_t, 0, I1, 0),
+#    instdes("lbu", ['t','o(b)'], 0x90000000, 0xfc000000, LDD|RD_b|WR_t, 0, I1, 0),
+#    instdes("lh", ['t','o(b)'], 0x84000000, 0xfc000000, LDD|RD_b|WR_t, 0, I1, 0),
+#    instdes("lhu", ['t','o(b)'], 0x94000000, 0xfc000000, LDD|RD_b|WR_t, 0, I1, 0),
+    instdes("lui", ['t','u'], 0x3c000000, 0xffe00000, WR_t, 0, I1, 0),
+    instdes("lw", ['t','o(b)'], 0x8c000000, 0xfc000000, LDD|RD_b|WR_t, 0, I1, 0),
+#    instdes("lwc0", ['E','o(b)'], 0xc0000000, 0xfc000000, CLD|RD_b|WR_CC, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("lwc2", ['E','o(b)'], 0xc8000000, 0xfc000000, CLD|RD_b|WR_CC, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("lwc3", ['E','o(b)'], 0xcc000000, 0xfc000000, CLD|RD_b|WR_CC, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("lwl", ['t','o(b)'], 0x88000000, 0xfc000000, LDD|RD_b|WR_t, 0, I1, 0),
+#    instdes("lwr", ['t','o(b)'], 0x98000000, 0xfc000000, LDD|RD_b|WR_t, 0, I1, 0),
+#    instdes("mfc0", ['t','G'], 0x40000000, 0xffe007ff, LCD|WR_t|RD_C0, 0, I1, 0),
+#    instdes("mfhi", ['d'], 0x00000010, 0xffff07ff, WR_d|RD_HI, 0, I1, 0),
+#    instdes("mflo", ['d'], 0x00000012, 0xffff07ff, WR_d|RD_LO, 0, I1, 0),
+#    instdes("mtc0", ['t','G'], 0x40800000, 0xffe007ff, COD|RD_t|WR_C0|WR_CC, 0, I1, 0),
+#    instdes("mthi", ['s'], 0x00000011, 0xfc1fffff, RD_s|WR_HI, 0, I1, 0),
+#    instdes("mtlo", ['s'], 0x00000013, 0xfc1fffff, RD_s|WR_LO, 0, I1, 0),
+#    instdes("mult", ['s','t'], 0x00000018, 0xfc00ffff, RD_s|RD_t|WR_HILO|IS_M, 0, I1, 0),
+#    instdes("multu", ['s','t'], 0x00000019, 0xfc00ffff, RD_s|RD_t|WR_HILO|IS_M, 0, I1, 0),
+#    instdes("neg", ['d','w'], 0x00000022, 0xffe007ff, WR_d|RD_t, 0, I1, 0),
+#    instdes("negu", ['d','w'], 0x00000023, 0xffe007ff, WR_d|RD_t, 0, I1, 0),
+#    instdes("nor", ['d','v','t'], 0x00000027, 0xfc0007ff, WR_d|RD_s|RD_t, 0, I1, 0),
+#    instdes("not", ['d','v'], 0x00000027, 0xfc1f07ff, WR_d|RD_s|RD_t, 0, I1, 0),
+    instdes("or", ['d','v','t'], 0x00000025, 0xfc0007ff, WR_d|RD_s|RD_t, 0, I1, 0),
+    instdes("ori", ['t','r','i'], 0x34000000, 0xfc000000, WR_t|RD_s, 0, I1, 0),
+#    instdes("rem", ['z','s','t'], 0x0000001a, 0xfc00ffff, RD_s|RD_t|WR_HILO, 0, I1, 0),
+#    instdes("remu", ['z','s','t'], 0x0000001b, 0xfc00ffff, RD_s|RD_t|WR_HILO, 0, I1, 0),
+#    instdes("rfe", [], 0x42000010, 0xffffffff, 0, 0, I1|T3, 0),
+#    instdes("sb", ['t','o(b)'], 0xa0000000, 0xfc000000, SM|RD_t|RD_b, 0, I1, 0),
+#    instdes("sh", ['t','o(b)'], 0xa4000000, 0xfc000000, SM|RD_t|RD_b, 0, I1, 0),
+#    instdes("sllv", ['d','t','s'], 0x00000004, 0xfc0007ff, WR_d|RD_t|RD_s, 0, I1, 0),
+    instdes("sll", ['d','w','s'], 0x00000004, 0xfc0007ff, WR_d|RD_t|RD_s, 0, I1, 0),
+    instdes("slli", ['d','w','<'], 0x00000000, 0xffe0003f, WR_d|RD_t, 0, I1, 0),
+    instdes("slt", ['d','v','t'], 0x0000002a, 0xfc0007ff, WR_d|RD_s|RD_t, 0, I1, 0),
+    instdes("slti", ['t','r','j'], 0x28000000, 0xfc000000, WR_t|RD_s, 0, I1, 0),
+    instdes("sltiu", ['t','r','j'], 0x2c000000, 0xfc000000, WR_t|RD_s, 0, I1, 0),
+    instdes("sltu", ['d','v','t'], 0x0000002b, 0xfc0007ff, WR_d|RD_s|RD_t, 0, I1, 0),
+#    instdes("srav", ['d','t','s'], 0x00000007, 0xfc0007ff, WR_d|RD_t|RD_s, 0, I1, 0),
+    instdes("sra", ['d','w','s'], 0x00000007, 0xfc0007ff, WR_d|RD_t|RD_s, 0, I1, 0),
+    instdes("srai", ['d','w','<'], 0x00000003, 0xffe0003f, WR_d|RD_t, 0, I1, 0),
+#    instdes("srlv", ['d','t','s'], 0x00000006, 0xfc0007ff, WR_d|RD_t|RD_s, 0, I1, 0),
+    instdes("srl", ['d','w','s'], 0x00000006, 0xfc0007ff, WR_d|RD_t|RD_s, 0, I1, 0),
+    instdes("srli", ['d','w','<'], 0x00000002, 0xffe0003f, WR_d|RD_t, 0, I1, 0),
+    instdes("sub", ['d','v','t'], 0x00000022, 0xfc0007ff, WR_d|RD_s|RD_t, 0, I1, 0),
+    instdes("subu", ['d','v','t'], 0x00000023, 0xfc0007ff, WR_d|RD_s|RD_t, 0, I1, 0),
+    instdes("sw", ['t','o(b)'], 0xac000000, 0xfc000000, SM|RD_t|RD_b, 0, I1, 0),
+#    instdes("swc0", ['E','o(b)'], 0xe0000000, 0xfc000000, SM|RD_C0|RD_b, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("swc2", ['E','o(b)'], 0xe8000000, 0xfc000000, SM|RD_C2|RD_b, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("swc3", ['E','o(b)'], 0xec000000, 0xfc000000, SM|RD_C3|RD_b, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("swl", ['t','o(b)'], 0xa8000000, 0xfc000000, SM|RD_t|RD_b, 0, I1, 0),
+#    instdes("swr", ['t','o(b)'], 0xb8000000, 0xfc000000, SM|RD_t|RD_b, 0, I1, 0),
+#    instdes("syscall", [], 0x0000000c, 0xffffffff, TRAP, 0, I1, 0),
+#    instdes("syscall", ['B'], 0x0000000c, 0xfc00003f, TRAP, 0, I1, 0),
+#    instdes("tlbp", [], 0x42000008, 0xffffffff, INSN_TLB, 0, I1, 0),
+#    instdes("tlbr", [], 0x42000001, 0xffffffff, INSN_TLB, 0, I1, 0),
+#    instdes("tlbwi", [], 0x42000002, 0xffffffff, INSN_TLB, 0, I1, 0),
+#    instdes("tlbwr", [], 0x42000006, 0xffffffff, INSN_TLB, 0, I1, 0),
+    instdes("xor", ['d','v','t'], 0x00000026, 0xfc0007ff, WR_d|RD_s|RD_t, 0, I1, 0),
+    instdes("xori", ['t','r','j'], 0x38000000, 0xfc000000, WR_t|RD_s, 0, I1, 0),
+#    instdes("bc2f", ['p'], 0x49000000, 0xffff0000, CBD|RD_CC, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("bc2t", ['p'], 0x49010000, 0xffff0000, CBD|RD_CC, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("cfc2", ['t','G'], 0x48400000, 0xffe007ff, LCD|WR_t|RD_C2, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("ctc2", ['t','G'], 0x48c00000, 0xffe007ff, COD|RD_t|WR_CC, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("mfc2", ['t','G'], 0x48000000, 0xffe007ff, LCD|WR_t|RD_C2, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("mtc2", ['t','G'], 0x48800000, 0xffe007ff, COD|RD_t|WR_C2|WR_CC, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("bc3f", ['p'], 0x4d000000, 0xffff0000, CBD|RD_CC, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("bc3t", ['p'], 0x4d010000, 0xffff0000, CBD|RD_CC, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("cfc3", ['t','G'], 0x4c400000, 0xffe007ff, LCD|WR_t|RD_C3, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("ctc3", ['t','G'], 0x4cc00000, 0xffe007ff, COD|RD_t|WR_CC, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("mfc3", ['t','G'], 0x4c000000, 0xffe007ff, LCD|WR_t|RD_C3, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("mtc3", ['t','G'], 0x4c800000, 0xffe007ff, COD|RD_t|WR_C3|WR_CC, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("bc0f", ['p'], 0x41000000, 0xffff0000, CBD|RD_CC, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("bc0t", ['p'], 0x41010000, 0xffff0000, CBD|RD_CC, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("c0", ['C'], 0x42000000, 0xfe000000, CP, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("c2", ['C'], 0x4a000000, 0xfe000000, CP, 0, I1, IOCT|IOCTP|IOCT2),
+#    instdes("c3", ['C'], 0x4e000000, 0xfe000000, CP, 0, I1, IOCT|IOCTP|IOCT2),
 ]
 
 instopdes = collections.namedtuple('instopdes', ['fnc', 'operator', 'info', 'size'])
@@ -442,14 +563,17 @@ instopdeslist = {
     'sh':    instopdes(instop_s, None, None, 16),
     'sllv':  instopdes(instop_alu, operator.lshift, 'u', 32),
     'sll':   instopdes(instop_alu, operator.lshift, 'u', 32),
+    'slli':   instopdes(instop_alu, operator.lshift, 'u', 32),
     'slt':   instopdes(instop_alu, operator.lt, 's', 32),
     'slti':  instopdes(instop_alu, operator.lt, 's', 32),
     'sltiu': instopdes(instop_alu, operator.lt, 'u', 32),
     'sltu':  instopdes(instop_alu, operator.lt, 'u', 32),
     'srav':  instopdes(instop_alu, operator.rshift, 's', 32),
     'sra':   instopdes(instop_alu, operator.rshift, 's', 32),
+    'srai':   instopdes(instop_alu, operator.rshift, 's', 32),
     'srlv':  instopdes(instop_alu, operator.rshift, 'u', 32),
     'srl':   instopdes(instop_alu, operator.rshift, 'u', 32),
+    'srli':   instopdes(instop_alu, operator.rshift, 'u', 32),
     'sub':   instopdes(instop_alu, operator.sub, 's', 32),
     'subu':  instopdes(instop_alu, operator.sub, 'u', 32),
     'sw':    instopdes(instop_s, None, None, 32),
@@ -464,7 +588,7 @@ instopdeslist = {
     'tlbwi': instopdes(None, None, None, 32),
     'tlbwr': instopdes(None, None, None, 32),
     'xor':   instopdes(instop_alu, operator.xor, 'u', 32),
-    'xori':  instopdes(instop_alu, operator.xor, 'u', 32),
+    'xori':  instopdes(instop_alu, operator.xor, 's', 32),
     'bc2f':  instopdes(None, None, None, 32),
     'bc2t':  instopdes(None, None, None, 32),
     'cfc2':  instopdes(None, None, None, 32),
@@ -508,6 +632,20 @@ regnum2regname = {}
 for r in regname2regnum:
     regnum2regname[regname2regnum[r]] = r
 
+regname2regnum_rv = {
+    'zero': 0, 'ra': 1, 'sp':  2, 'gp':  3, 'tp':  4, 't0':  5,
+    't1':  6, 't2':  7, 's0':  8, 'fp':  8, 's1':  9, 'a0': 10, 'a1': 11,
+    'a2': 12, 'a3': 13, 'a4': 14, 'a5': 15, 'a6': 16, 'a7': 17,
+    's2': 18, 's3': 19, 's4': 20, 's5': 21, 's6': 22, 's7': 23,
+    's8': 24, 's9': 25, 's10': 26, 's11': 27, 't3': 28, 't4': 29,
+    't5': 30, 't6': 31}
+
+regnum2regname_rv = {}
+
+for r in regname2regnum_rv:
+    regnum2regname_rv[regname2regnum_rv[r]] = r
+
+
 instdesbyname = {}
 
 for inst in instdeslist:
@@ -515,6 +653,15 @@ for inst in instdeslist:
         instdesbyname[inst.name] = [inst]
     else:
         instdesbyname[inst.name].append(inst)
+
+instdesbyname_rv = {}
+
+for inst in instdeslist_rv:
+    if not inst.name in instdesbyname_rv:
+        instdesbyname_rv[inst.name] = [inst]
+    else:
+        instdesbyname_rv[inst.name].append(inst)
+
 
 class simarg(object):
     def __init__(self, argspec, regkind = None, reg = None, value = 0, rddep = False, wrdep = False, encoding = 0, text = None):
@@ -537,6 +684,14 @@ class siminst(object):
         if regin in regname2regnum:
             return regname2regnum[regin]
         return int(regin)
+    @staticmethod
+    def regnum_rv(regin):
+        if regin[0] == 'x':
+            if isinstance(regin[1:], numbers.Number):
+                return int(regin[1:])
+        if regin in regname2regnum_rv:
+            return regname2regnum_rv[regin]
+        return None
     @staticmethod
     def parse_argument(argspec, arg, pinfo):
         argtext = arg
@@ -579,7 +734,7 @@ class siminst(object):
                     return None
                 if (value < argdes.min) or (value > argdes.max):
                     return None
-                if value >= value:
+                if value >= value:  # TODO error
                     valunsig = value
                 else:
                     valunsig = value + 0x100000000
@@ -592,6 +747,99 @@ class siminst(object):
                 if reg is None:
                     rn = 0
                 elif (reg in regname2regnum) or (reg[0] == '$'):
+                    rn = siminst.regnum(reg)
+                    if rn is None:
+                        return None
+                    if rn != 0:
+                        if locdes is not None:
+                            if rn >= 1 << locdes.bits:
+                                return None
+                            if pinfo & locdes.rd_mask != 0:
+                                rddep = True
+                            if pinfo & locdes.wr_mask != 0:
+                                wrdep = True
+                else:
+                    return None
+                if locdes is not None:
+                    encoding |= rn << locdes.startbit
+            elif argdes.kind == 'p':
+                try:
+                    value = int(a, 0)
+                except ValueError:
+                    value = 0
+                if value & ((1 << argdes.shift) - 1):
+                    return None
+                value >>= argdes.shift
+                if (value < argdes.min) or (value > argdes.max):
+                    return None
+            elif argdes.kind == 'a':
+                try:
+                    value = int(a, 0)
+                except ValueError:
+                    value = 0
+                if value & ((1 << argdes.shift) - 1):
+                    return None
+                value >>= argdes.shift
+                if (value < argdes.min) or (value > argdes.max):
+                    return None
+            else:
+                return None
+        return simarg(argspec = argspec, regkind = regkind, reg = rn, value = value, rddep = rddep, wrdep = wrdep, encoding = encoding, text = argtext)
+    @staticmethod
+    def parse_argument_rv(argspec, argtext, pinfo):
+        argtext = arg
+        p = argspec.find('(')
+        if p != -1:
+            if argspec[-1] != ')':
+                return None
+            aspcs = [argspec[0 : p], argspec[p + 1: -1]]
+            p = argtext.find('(')
+            if p != -1:
+                if argtext[-1] != ')':
+                    return None
+                arg = [ argtext[0 : p], argtext[p + 1: -1]]
+            else:
+                arg = [ argtext[0 : p], None]
+        else:
+            aspcs = [argspec]
+            arg = [argtext]
+        value = 0
+        rddep = False
+        wrdep = False
+        rn = None
+        regkind = None
+        encoding = 0
+        for i in range(0, len(aspcs)):
+            if aspcs[i] not in argdesbycode:
+                return None
+            argdes = argdesbycode[aspcs[i]]
+            if argdes.loc in locdesbycode:
+                locdes = locdesbycode[argdes.loc]
+            else:
+                locdes = None
+            a = arg[i]
+            if (argdes.kind == 'n') or (argdes.kind == 'o'):
+                if (argdes.kind == 'o') and (len(a) == 0):
+                    continue
+                try:
+                    value = int(a, 0)
+                except ValueError:
+                    return None
+                if (value < argdes.min) or (value > argdes.max):
+                    return None
+                if value >= 0:  # TODO error? value>=value
+                    valunsig = value
+                else:
+                    valunsig = value + 0x100000000
+                if locdes is not None:
+                    valunsig &= (1 << locdes.bits) - 1
+                    encoding |=  valunsig << locdes.startbit
+            elif argdes.kind == 'g':
+                reg = a
+                regkind = argdes.kind
+                if reg is None:
+                    rn = 0
+                elif (reg in regname2regnum_rv) or (reg[0] == 'x'):
                     rn = siminst.regnum(reg)
                     if rn is None:
                         return None
@@ -671,6 +919,52 @@ class siminst(object):
             break
         if matchdes is None:
             sys.stderr.write('no matching argument combination for line "%s"\n'%(asline))
+            return None
+        encoding = matchdes.match
+        for a in matchargs:
+            encoding |= a.encoding
+        return siminst(operation, matchargs, encoding, matchdes.pinfo)
+    @staticmethod
+    def parse_rv(asline):
+        p = asline.find('#')
+        if p >= 0:
+            asline = asline[0:p]
+        p = asline.find(':')
+        label = None
+        if p >= 0:
+            label = asline[0:p].strip()
+            asline = asline[p+1:]
+        elem = asline.split(None, 1)
+        operation = elem[0]
+        args = []
+        if len(elem) > 1:
+            for a in elem[1].split(','):
+                a = a.strip()
+                if len(a) == 0:
+                    sys.stderr.write('empty/missing argument in line "%s"\n'%(asline))
+                    return None
+                else:
+                    args.append(a)
+        if operation not in instdesbyname_rv:
+            sys.stderr.write('operation "%s" in line "%s" is not known\n'%(operation, asline))
+        matchdes = None
+        for des in instdesbyname_rv[operation]:
+            if len(args) != len(des.args):
+                continue
+            matchargs = []
+            argmismatch = False
+            for i in range(0,len(args)):
+                ma = siminst.parse_argument(des.args[i], args[i], des.pinfo)
+                if ma == None:
+                    argmismatch = True
+                    break
+                matchargs.append(ma)
+            if argmismatch:
+                continue
+            matchdes = des
+            break
+        if matchdes is None:
+            sys.stderr.write('RISC V no matching argument combination for line "%s"\n'%(asline))
             return None
         encoding = matchdes.match
         for a in matchargs:
@@ -803,6 +1097,11 @@ class siminstlist(object):
             inst = siminst.parse(inst)
         self.instlist.append(inst)
         return inst
+    def append_rv(self, inst):
+        if isinstance(inst, basestring):
+            inst_code = siminst.parse_rv(inst)
+        self.instlist.append(inst_code)
+        return inst_code
     def listastext(self, regsymbolic = True):
         l = []
         for inst in self.instlist:
